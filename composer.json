@@ -1,5 +1,5 @@
 {
-  "name": "darrynten/sage-one-php",
+  "name": "richwestcoast/sage-one-php",
   "description": "PHP Client for the Sage One API",
   "type": "library",
   "require": {
