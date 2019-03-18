@@ -13,7 +13,7 @@ namespace DarrynTen\SageOne\Models;
 
 use DarrynTen\SageOne\BaseModel;
 
-class Account extends BaseModel
+class Customer extends BaseModel
 {
     /**
      * The ID of the account

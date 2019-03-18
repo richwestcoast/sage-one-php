@@ -134,6 +134,7 @@ class RequestHandler
      */
     public function handleRequest(string $method, string $uri, array $options, array $parameters = [])
     {
+
         if (!in_array($method, $this->verbs)) {
             throw new ApiException('405 Bad HTTP Verb', 405);
         }

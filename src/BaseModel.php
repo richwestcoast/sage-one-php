@@ -120,13 +120,13 @@ abstract class BaseModel
      *
      * @return json A collection of entities in raw json from Sage
      */
-    public function all()
+    public function all($parameters)
     {
         if (!$this->features['all']) {
             $this->throwException(ModelException::NO_GET_ALL_SUPPORT);
         }
 
-        $results = $this->request->request('GET', $this->endpoint, 'Get');
+        $results = $this->request->request('GET', $this->endpoint, 'Get', $parameters);
 
         return json_encode($results);
     }
