@@ -4,7 +4,7 @@
  *
  * @category Library
  * @package  SageOne
- * @author   Vitaliy Likhachev <make.it.git@gmail.com>
+ * @author   Darryn Ten <darrynten@github.com>
  * @license  MIT <https://github.com/darrynten/sage-one-php/blob/master/LICENSE>
  * @link     https://github.com/darrynten/sage-one-php
  */
@@ -13,14 +13,131 @@ namespace DarrynTen\SageOne\Models;
 
 use DarrynTen\SageOne\BaseModel;
 
-/**
- * Tax Invoce Model
- *
- * Details on writable properties for Tax Invoice:
- * https://accounting.sageone.co.za/api/1.1.2/Help/ResourceModel?modelName=TaxInvoice
- */
 class TaxInvoice extends BaseModel
 {
+    /**
+     * The ID of the account
+     *
+     * @var int $id
+     */
+    public $id;
+
+    /**
+     * The name of the account
+     *
+     * @var string $name
+     */
+    public $name;
+
+    /**
+     * The category of the account
+     *
+     * @var AccountCategory $category
+     */
+    public $category;
+
+    /**
+     * Active flag
+     *
+     * @var bool $active
+     */
+    public $active;
+
+    /**
+     * Balance
+     *
+     * READ ONLY
+     *
+     * @var double $balance
+     */
+    protected $balance;
+
+    /**
+     * Description of the account
+     *
+     * @var string $description
+     */
+    public $description;
+
+    /**
+     * Reporting group ID
+     *
+     * Nullable
+     *
+     * @var int $reportingGroupId
+     */
+    public $reportingGroupId = null;
+
+    /**
+     * Unallocated account flag
+     *
+     * READ ONLY
+     *
+     * @var boolean $unallocatedAccount
+     */
+    protected $unallocatedAccount;
+
+    /**
+     * Tax locked flag
+     *
+     * READ ONLY
+     *
+     * @var boolean $isTaxLocked
+     */
+    protected $isTaxLocked;
+
+    /**
+     * Date the account was last modified
+     *
+     * READ ONLY
+     *
+     * Nullable
+     *
+     * @var DateTime $modified
+     */
+    protected $modified = null;
+
+    /**
+     * Date the account was created
+     *
+     * READ ONLY
+     *
+     * @var DateTime $created
+     */
+    protected $created;
+
+    /**
+     * The account type reference
+     *
+     * READ ONLY
+     *
+     * @var int $accountType
+     */
+    protected $accountType;
+
+    /**
+     * Account activity flag
+     *
+     * READ ONLY
+     *
+     * @var boolean $hasActivity
+     */
+    protected $hasActivity;
+
+    /**
+     * Default tax type ID reference
+     *
+     * @var int $defaultTaxTypeId
+     */
+    public $defaultTaxTypeId = null;
+
+    /**
+     * Actual model of the default tax type
+     *
+     * @var TaxType $defaultTaxType
+     */
+    public $defaultTaxType = null;
+
     /**
      * The API Endpoint
      *
@@ -29,383 +146,115 @@ class TaxInvoice extends BaseModel
     protected $endpoint = 'TaxInvoice';
 
     /**
+     * Defines all possible fields.
+     *
+     * Used by the base class to decide what gets submitted in a save call,
+     * validation, etc
+     *
+     * All must include a type, whether or not it's nullable, and whether or
+     * not it's persistable.
+     *
+     * NB: Naming convention for keys is to lowercase the first character of the
+     * field returned by Sage (they use PascalCase and we use camelCase)
+     *
+     * `ID` is automatically converted to `id`
+     *
+     * Details on writable properties for Account:
+     * https://accounting.sageone.co.za/api/1.1.2/Help/ResourceModel?modelName=Account
+     *
+     * TODO check why/if ID is truly writable!
+     *
      * @var array $fields
      */
     protected $fields = [
-        'dueDate' => [
-            'type' => 'DateTime',
+        'id' => [
+            'type' => 'integer',
             'nullable' => false,
-            'readonly' => false,
-            'required' => true,
+            'persistable' => true,
         ],
-        'fromDocument' => [
+        'name' => [
             'type' => 'string',
             'nullable' => false,
-            'readonly' => false,
+            'persistable' => true,
         ],
-        'fromDocumentId' => [
-            'type' => 'integer',
-            'nullable' => true,
-            'readonly' => true,
+        'category' => [
+            'type' => 'AccountCategory',
+            'nullable' => false,
+            'persistable' => true,
         ],
-        'fromDocumentTypeId' => [
-            'type' => 'integer',
-            'nullable' => true,
-            'readonly' => true,
-        ],
-        'allowOnlinePayment' => [
+        'active' => [
             'type' => 'boolean',
-            'nullable' => true,
-            'readonly' => false,
+            'nullable' => false,
+            'persistable' => true,
         ],
-        'paid' => [
-            'type' => 'boolean',
-            'nullable' => true,
-            'readonly' => true,
+        'balance' => [
+            'type' => 'double',
+            'nullable' => false,
+            'persistable' => false,
         ],
-        'status' => [
+        'description' => [
             'type' => 'string',
             'nullable' => false,
-            'readonly' => true,
+            'persistable' => true,
         ],
-        'locked' => [
+        'reportingGroupId' => [
+            'type' => 'integer',
+            'nullable' => true,
+            'persistable' => true,
+        ],
+        'unallocatedAccount' => [
             'type' => 'boolean',
             'nullable' => false,
-            'readonly' => true,
+            'persistable' => false,
         ],
-        'customerId' => [
-            'type' => 'integer',
+        'isTaxLocked' => [
+            'type' => 'boolean',
             'nullable' => false,
-            'readonly' => false,
-            'required' => true,
-        ],
-        'customerName' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'customer' => [
-            'type' => 'Customer',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'salesRepresentativeId' => [
-            'type' => 'integer',
-            'nullable' => true,
-            'readonly' => false,
-        ],
-        'salesRepresentative' => [
-            'type' => 'SalesRepresentative',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'statusId' => [
-            'type' => 'integer',
-            'nullable' => true,
-            'readonly' => false,
+            'persistable' => false,
         ],
         'modified' => [
             'type' => 'DateTime',
             'nullable' => true,
-            'readonly' => true,
+            'persistable' => false,
         ],
         'created' => [
             'type' => 'DateTime',
-            'nullable' => true,
-            'readonly' => true,
+            'nullable' => false,
+            'persistable' => false,
         ],
-        'customer_CurrencyId' => [
-            'type' => 'integer',
-            'nullable' => true,
-            'readonly' => false,
-        ],
-        'customer_ExchangeRate' => [
-            'type' => 'double',
-            'nullable' => true,
-            'readonly' => false,
-        ],
-        'id' => [
+        'accountType' => [
             'type' => 'integer',
             'nullable' => false,
-            'readonly' => false,
+            'persistable' => false,
         ],
-        'date' => [
-            'type' => 'DateTime',
-            'nullable' => false,
-            'readonly' => false,
-            'required' => true,
-        ],
-        'inclusive' => [
+        'hasActivity' => [
             'type' => 'boolean',
             'nullable' => false,
-            'readonly' => false,
+            'persistable' => false,
         ],
-        'discountPercentage' => [
-            'type' => 'double',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'taxReference' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 30
-        ],
-        'documentNumber' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'reference' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'message' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 8000
-        ],
-        'discount' => [
-            'type' => 'double',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'exclusive' => [
-            'type' => 'double',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'tax' => [
-            'type' => 'double',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'rounding' => [
-            'type' => 'double',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'total' => [
-            'type' => 'double',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'amountDue' => [
-            'type' => 'double',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'postalAddress01' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'postalAddress02' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'postalAddress03' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'postalAddress04' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'postalAddress05' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'deliveryAddress01' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'deliveryAddress02' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'deliveryAddress03' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'deliveryAddress04' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100
-        ],
-        'deliveryAddress05' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100,
-        ],
-        'taxPeriodId' => [
+        'defaultTaxTypeId' => [
             'type' => 'integer',
             'nullable' => true,
-            'readonly' => true,
+            'persistable' => true,
         ],
-        /**
-         * TODO Find out what is 'printed',
-         * see https://accounting.sageone.co.za/api/1.1.2/Help/Api/POST-AccountReceipt-Save
-         * Response has it, but TaxInvoice does not
-         */
-        'printed' => [
-            'type' => 'boolean',
-            'nullable' => false,
-            'readonly' => false,
-        ],
-        'editable' => [
-            'type' => 'boolean',
-            'nullable' => false,
-            'readonly' => true,
-        ],
-        'hasAttachments' => [
-            'type' => 'boolean',
-            'nullable' => false,
-            'readonly' => true,
-        ],
-        'hasNotes' => [
-            'type' => 'boolean',
+        'defaultTaxType' => [
+            'type' => 'TaxType',
             'nullable' => true,
-            'readonly' => true,
-        ],
-        'hasAnticipatedDate' => [
-            'type' => 'boolean',
-            'nullable' => true,
-            'readonly' => true,
-        ],
-        'anticipatedDate' => [
-            'type' => 'DateTime',
-            'nullable' => true,
-            'readonly' => true,
-        ],
-        'externalReference' => [
-            'type' => 'string',
-            'nullable' => false,
-            'readonly' => false,
-            'min' => 0,
-            'max' => 100,
-        ],
-        'lines' => [
-            'type' => 'CommercialDocumentLine',
-            'collection' => true,
-            'nullable' => false,
-            'readonly' => false,
+            'persistable' => true,
         ]
     ];
 
     /**
+     * Features supported by the endpoint
+     *
+     * These features enable and disable certain calls from the base model
+     *
      * @var array $features
      */
     protected $features = [
         'all' => true,
         'get' => true,
         'save' => true,
-        'delete' => false
+        'delete' => true,
     ];
-
-    /**
-     * Calculates the specified Tax Invoice total fields.
-     *
-     * @return stdClass
-     */
-    public function calculate()
-    {
-        return $this->request->request(
-            'POST',
-            $this->endpoint,
-            'Calculate',
-            $this->toArray()
-        );
-    }
-
-    /**
-     * Emails the specified Tax Invoice.
-     * @param array $parameters
-     *   Example of request
-     *   {
-     *       "ID": 1,
-     *       "EmailAddress": "example@example.com",
-     *       "CCAddress": "sample string 3",
-     *       "BCCAddress": "sample string 4",
-     *       "Subject": "sample string 5",
-     *       "Message": "sample string 6",
-     *       "Attachments": [
-     *           {
-     *           "Key": "sample string 1",
-     *           "Value": "sample string 2"
-     *           },
-     *           {
-     *           "Key": "sample string 1",
-     *           "Value": "sample string 2"
-     *           }
-     *       ]
-     *   }
-     */
-    public function email(array $parameters)
-    {
-        $this->request->request('POST', $this->endpoint, 'Email', $parameters);
-    }
-
-    /**
-     * Emails the delivery note for a specific Tax Invoice
-     * @param array $parameters
-     *   Example of request
-     *   {
-     *       "ID": 1,
-     *       "EmailAddress": "example@example.com",
-     *       "CCAddress": "sample string 3",
-     *       "BCCAddress": "sample string 4",
-     *       "Subject": "sample string 5",
-     *       "Message": "sample string 6",
-     *       "Attachments": [
-     *           {
-     *           "Key": "sample string 1",
-     *           "Value": "sample string 2"
-     *           },
-     *           {
-     *           "Key": "sample string 1",
-     *           "Value": "sample string 2"
-     *           }
-     *       ]
-     *   }
-     */
-    public function emailDeliveryNote(array $parameters)
-    {
-        $this->request->request('POST', $this->endpoint, 'EmailDeliveryNote', $parameters);
-    }
 }
